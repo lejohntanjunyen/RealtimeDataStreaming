@@ -1,6 +1,9 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from kafka import KafkaProducer
+import json
+import time
 
 default_args = {
     "owner": "airscholar",
@@ -49,8 +52,10 @@ def stream_data():
     response = get_data()
     response = format_data(response)
     
-    import json
-    print(json.dumps(response, indent=3))
+    producer = KafkaProducer(bootstrap_servers=['localhost:9092'], max_block_ms=5000)
+    producer.send(topic="customerInfo", value=json.dumps(response).encode('utf-8'))  
+    
+    # print(json.dumps(response, indent=3))
     
 stream_data()
     
