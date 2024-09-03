@@ -16,8 +16,6 @@ def get_data():
     # print(json.dumps(res, indent=3))
     return res
     
-get_data()
-
 def format_data(res):
     data = {}
     data["firstName"] = res["name"]["first"]
@@ -25,14 +23,14 @@ def format_data(res):
     data["gender"] = res["gender"]
     data["dob"] = res["dob"]["date"]
     data["age"] = res["dob"]["age"]
-    data["address"] = res["location"]["street"]["number"] + " " + \
-                            res["location"]["street"]["name"] + "," + \
-                            res["location"]["city"] + "," + \
-                            res["location"]["state"] + \
-                            res["location"]["postcode"] + "," + \
-                            res["location"]["country"]
-    data["coordinates"] = res["location"]["coordinates"]["longitude"] + "," + \
-                            res["location"]["coordinates"]["latitude"]
+    
+    data["address"] = "{}, {}, {}, {}, {}, {}".format(str(res["location"]["street"]["number"]),
+                                   res["location"]["street"]["name"],
+                                   res["location"]["city"], res["location"]["postcode"],
+                                   res["location"]["state"], res["location"]["country"])
+    data["coordinates"] = "{}, {}".format(res["location"]["coordinates"]["longitude"],
+                                    res["location"]["coordinates"]["latitude"])
+    
     data["email"] = res["email"]
     data["contact"] = res["phone"]
     data["contact2"] = res["cell"]
@@ -51,6 +49,7 @@ def stream_data():
     response = get_data()
     response = format_data(response)
     
+    import json
     print(json.dumps(response, indent=3))
     
 stream_data()
