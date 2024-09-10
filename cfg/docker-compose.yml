@@ -101,41 +101,38 @@ services:
       - confluent
 
   webserver:
-   image: apache/airflow:latest-python3.12
-   command: webserver
-  #  entrypoint: "/opt/airflow/src/entrypoint.sh"
-   depends_on:
-    postgres:
-      condition: service_healthy
-    scheduler:
-      condition: service_started
-   ports:
-     - "8080:8080"
-   environment:
-     - AIRFLOW__CORE__LOAD_EXAMPLES = n
-     - AIRFLOW__CORE__EXECUTOR = LocalExecutor
-     - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN = postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-     - AIRFLOW_WEBSERVER_SECRET_KEY = airflow123
-   logging:
-     options:
-       max-size: 10m
-       max-file: "3"
-   volumes:
-     - ../dags:/opt/airflow/dags
-    #  - ../src/entrypoint.sh:/opt/airflow/src/entrypoint.sh
-     - ./requirements.txt:/opt/airflow/requirements.txt
-
-   healthcheck:
-     test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-     interval: 30s
-     timeout: 30s
-     retries: 3
-     start_period: 30s
-   networks:
-     - confluent
+    build: .
+    command: webserver
+    entrypoint: ["/opt/airflow/script/entrypoint.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "n"
+      AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+      AIRFLOW_WEBSERVER_SECRET_KEY: "airflow123"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../src/entrypoint.sh:/opt/airflow/script/entrypoint.sh
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+    networks:
+      - confluent
 
   scheduler:
-    image: apache/airflow:latest
+    build: .
     depends_on:
       postgres:
         condition: service_healthy
@@ -143,11 +140,11 @@ services:
       - ../dags:/opt/airflow/dags
       - ./requirements.txt:/opt/airflow/requirements.txt
     environment:
-      - AIRFLOW__CORE__LOAD_EXAMPLES = n
-      - AIRFLOW__CORE__EXECUTOR = LocalExecutor
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN = postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      - AIRFLOW_WEBSERVER_SECRET_KEY = airflow123
-    command: bash -c "airflow db init && pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "n"
+      AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+      AIRFLOW_WEBSERVER_SECRET_KEY: "airflow123"
+    command: bash -c "apt-get update && apt-get install -y git && airflow db init && pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
     networks:
       - confluent
 
