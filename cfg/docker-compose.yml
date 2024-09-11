@@ -110,9 +110,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      AIRFLOW__CORE__LOAD_EXAMPLES: "n"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow123@postgres:5432/airflow"
       AIRFLOW_WEBSERVER_SECRET_KEY: "airflow123"
     logging:
       options:
@@ -120,7 +120,7 @@ services:
         max-file: "3"
     volumes:
       - ../dags:/opt/airflow/dags
-      - ../src/entrypoint.sh:/opt/airflow/script/entrypoint.sh
+      - ./entrypoint.sh:/opt/airflow/script/entrypoint.sh
       - ./requirements.txt:/opt/airflow/requirements.txt
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
@@ -140,9 +140,9 @@ services:
       - ../dags:/opt/airflow/dags
       - ./requirements.txt:/opt/airflow/requirements.txt
     environment:
-      AIRFLOW__CORE__LOAD_EXAMPLES: "n"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow@postgres:5432/airflow"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow123@postgres:5432/airflow"
       AIRFLOW_WEBSERVER_SECRET_KEY: "airflow123"
     command: bash -c "apt-get update && apt-get install -y git && airflow db init && pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
     networks:
