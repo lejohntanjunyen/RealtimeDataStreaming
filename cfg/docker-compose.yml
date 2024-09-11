@@ -144,7 +144,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: "LocalExecutor"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "postgresql+psycopg2://airflow:airflow123@postgres:5432/airflow"
       AIRFLOW_WEBSERVER_SECRET_KEY: "airflow123"
-    command: bash -c "apt-get update && apt-get install -y git && airflow db init && pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
+    command: bash -c "airflow db init && pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
     networks:
       - confluent
 
