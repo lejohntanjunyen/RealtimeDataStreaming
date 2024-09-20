@@ -9,7 +9,8 @@ import requests
 
 default_args = {
     "owner": "airscholar",
-    "start_date": datetime(2024, 9, 10, 10, 00)
+    "start_date": datetime(2024, 9, 19, 10, 00),
+    "retries": 1,
 }
 
 def get_data():
@@ -119,7 +120,7 @@ def stream_data():
         None
     """
     # configure Kafka connection 
-    producer = KafkaProducer(bootstrap_servers=['localhost:9092'], max_block_ms=5000)
+    producer = KafkaProducer(bootstrap_servers=['broker:29092'], max_block_ms=5000)
     # initialize current time
     current_time = time.time()
     # run function for a minute
@@ -136,6 +137,7 @@ def stream_data():
             except Exception as e:
                 logging.ERROR(f"[ERROR] An error occured: {e}")
                 continue
+
     
 # Airflow DAG Computation
 with DAG("user_automation",
