@@ -33,7 +33,8 @@ def get_data():
     res = res["results"][0]
     
     return res
-    
+
+
 def format_data(res):
     """
     Formats user data into a structured dictionary.
@@ -94,6 +95,7 @@ def format_data(res):
     data["profilePicture"] = res["picture"]["medium"]
     
     return data
+    
 
 def stream_data():
     """
@@ -105,7 +107,7 @@ def stream_data():
     logs the error and continues the streaming process.
 
     The Kafka producer is set up with the following configuration:
-        - bootstrap_servers: ['localhost:9092']
+        - bootstrap_servers: ['broker:29092']
         - max_block_ms: 5000
 
     Behavior:
@@ -137,7 +139,7 @@ def stream_data():
             except Exception as e:
                 logging.ERROR(f"[ERROR] An error occured: {e}")
                 continue
-
+            
     
 # Airflow DAG Computation
 with DAG("user_automation",
